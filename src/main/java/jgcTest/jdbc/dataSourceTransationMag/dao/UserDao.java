@@ -11,6 +11,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,25 @@ public class UserDao {
 //        } else {
 //            System.out.println("ds1 != ds2");
 //        }
+    }
+
+    /**
+     *
+     * @throws SQLException
+     */
+    public void addUser2() throws SQLException {
+        Connection connection = jdbcTemplate.getDataSource().getConnection();
+        PreparedStatement ps = connection.prepareStatement("insert into user (username,age,address) values (?,?,?)");
+        ps.setString(1,"addUserWithConnect");
+        ps.setInt(2,22);
+        ps.setString(3,"ccccc");
+        ps.executeUpdate();
+
+        User u = new User("addUserWithJDBC","jjjj",11);
+        addUser(u);
+
+        System.out.println(1/0);//抛出异常
+
     }
 
     public void updateUser(User user)  {
