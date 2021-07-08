@@ -1,14 +1,18 @@
 package jgcTest.jdbc.dataSourceTransationMag.dao;
 
 import jgcTest.bean.User;
+import org.springframework.core.NamedThreadLocal;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,24 +27,33 @@ public class UserDao {
     private JdbcTemplate jdbcTemplate;
 
     public void addUser(User user) throws SQLException {
-        Connection con = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
-        con.setAutoCommit(false);
+//        DataSource datasource = jdbcTemplate.getDataSource();
+//        Connection connection = datasource.getConnection();
+//        ConnectionHolder holder = new ConnectionHolder(connection);
+        //TransactionSynchronizationManager.bindResource(datasource, holder);
+
+//        ThreadLocal<Map<Object, Object>> resources =
+//                new NamedThreadLocal<Map<Object, Object>>("Transactional resources");
+//        Map<Object, Object> map = new HashMap<Object, Object>();
+//        map.put(datasource,holder);
+//        resources.set(map);
+
         jdbcTemplate.update("insert into user (username,age,address) values (?,?,?)",
                 new Object[]{user.getUsername(),user.getAge(),user.getAddress()});
-        Connection con2 = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
-        if (con == con2) {
-            System.out.println("con == con2,autoCommit:" + con2.getAutoCommit());
-        } else {
-            System.out.println("con != con2,autoCommit:" + con2.getAutoCommit());
-        }
+//        Connection con2 = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
+//        if (con2 == connection) {
+//            System.out.println("同一个connect");
+//        } else {
+//            System.out.println("不是同一个connect");
+//        }
 
-        DataSource ds1 = jdbcTemplate.getDataSource();
-        DataSource ds2 = jdbcTemplate.getDataSource();
-        if (ds1 == ds2) {
-            System.out.println("ds1 == ds2");
-        } else {
-            System.out.println("ds1 != ds2");
-        }
+//        DataSource ds1 = jdbcTemplate.getDataSource();
+//        DataSource ds2 = jdbcTemplate.getDataSource();
+//        if (ds1 == ds2) {
+//            System.out.println("ds1 == ds2");
+//        } else {
+//            System.out.println("ds1 != ds2");
+//        }
     }
 
     public void updateUser(User user)  {

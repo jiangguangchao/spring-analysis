@@ -10,6 +10,11 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 /**
  * @program: spring
  * @description:
@@ -40,9 +45,9 @@ public class TransationMagMain {
     }
 
     @Test
-    public void test2() {
+    public void test2()  {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
-        User u = new User("jgc6","hn",33);
+        User u = new User("jgc7","hn",33);
         UserDao userDao = context.getBean(UserDao.class);
         try {
             userDao.addUser(u);
@@ -51,6 +56,32 @@ public class TransationMagMain {
             //dstm.commit(transactionStatus);
             //dstm.rollback(transactionStatus);
             return;
+        }
+
+    }
+
+    /**
+     * 如果connect 将自动提交设置为false，则执行过sql后要 使用connect.commit()进行手动提交
+     * 如果不commit，则前面的改动不会被提交。
+     */
+    @Test
+    public void test3() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
+        DataSource datasource = context.getBean(DataSource.class);
+        try {
+            Connection con = datasource.getConnection();
+            con.setAutoCommit(false);
+//            PreparedStatement ps = con.prepareStatement("update user set username = ? where id = ?");
+//            ps.setString(1,"updateJGC123");
+//            ps.setInt(2, 3);
+            PreparedStatement ps = con.prepareStatement("insert into user (username,age,address) values (?,?,?)");
+            ps.setString(1,"myname");
+            ps.setInt(2,31);
+            ps.setString(3,"bj");
+            ps.executeUpdate();
+            con.commit();
+        } catch (SQLException e) {
+            log.error("获取connect异常",e);
         }
     }
 }
