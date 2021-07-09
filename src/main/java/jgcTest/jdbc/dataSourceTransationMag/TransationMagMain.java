@@ -9,11 +9,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
  * @program: spring
@@ -111,6 +114,180 @@ public class TransationMagMain {
         log.info("提交操作");
         dstm.commit(transactionStatus);
 
+    }
+
+
+    @Test
+    public void test5()  {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
+        DataSourceTransactionManager dstm = (DataSourceTransactionManager) context.getBean("dstm");
+        UserDao userDao = context.getBean(UserDao.class);
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus1 = dstm.getTransaction(transactionDefinition);
+        User u1 = new User("u111111","111111",11);
+
+        try {
+            userDao.addUser(u1);
+        } catch (SQLException throwables) {
+            log.error("新增用户u1异常", throwables);
+            dstm.rollback(transactionStatus1);
+            return;
+        }
+
+        TransactionStatus transactionStatus2 = dstm.getTransaction(transactionDefinition);
+        User u2 = new User("u222222","222222",22);
+
+        try {
+            userDao.addUser(u2);
+        } catch (SQLException throwables) {
+            log.error("新增用户u2异常", throwables);
+            dstm.rollback(transactionStatus2);
+            return;
+        }
+
+        log.info("提交transactionStatus2");
+        dstm.commit(transactionStatus2);
+
+    }
+
+    @Test
+    public void test6()  {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
+        DataSourceTransactionManager dstm = (DataSourceTransactionManager) context.getBean("dstm");
+        UserDao userDao = context.getBean(UserDao.class);
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus1 = dstm.getTransaction(transactionDefinition);
+        User u1 = new User("u111111","111111",11);
+
+        try {
+            userDao.addUser(u1);
+        } catch (SQLException throwables) {
+            log.error("新增用户u1异常", throwables);
+            dstm.rollback(transactionStatus1);
+            return;
+        }
+
+        TransactionStatus transactionStatus2 = dstm.getTransaction(transactionDefinition);
+        User u2 = new User("u222222","222222",22);
+
+        try {
+            userDao.addUser(u2);
+        } catch (SQLException throwables) {
+            log.error("新增用户u2异常", throwables);
+            dstm.rollback(transactionStatus2);
+            return;
+        }
+
+        log.info("提交transactionStatus1");
+        dstm.commit(transactionStatus1);
+
+    }
+
+
+    @Test
+    public void test7()  {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
+        DataSourceTransactionManager dstm = (DataSourceTransactionManager) context.getBean("dstm");
+        UserDao userDao = context.getBean(UserDao.class);
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus1 = dstm.getTransaction(transactionDefinition);
+        User u1 = new User("u777777","777777",11);
+
+        try {
+            userDao.addUser(u1);
+        } catch (SQLException throwables) {
+            log.error("新增用户u1异常", throwables);
+            dstm.rollback(transactionStatus1);
+            return;
+        }
+
+        transactionDefinition.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
+        TransactionStatus transactionStatus2 = dstm.getTransaction(transactionDefinition);
+        User u2 = new User("u777777_2","777777_2",22);
+
+        try {
+            userDao.addUser(u2);
+        } catch (SQLException throwables) {
+            log.error("新增用户u2异常", throwables);
+            dstm.rollback(transactionStatus2);
+            return;
+        }
+
+        log.info("提交transactionStatus2");
+        dstm.commit(transactionStatus2);
+
+    }
+
+    @Test
+    public void test8()  {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
+        DataSourceTransactionManager dstm = (DataSourceTransactionManager) context.getBean("dstm");
+        UserDao userDao = context.getBean(UserDao.class);
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus1 = dstm.getTransaction(transactionDefinition);
+        User u1 = new User("u8888888","8888888",11);
+
+        try {
+            userDao.addUser(u1);
+        } catch (SQLException throwables) {
+            log.error("新增用户u1异常", throwables);
+            dstm.rollback(transactionStatus1);
+            return;
+        }
+
+        transactionDefinition.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
+        TransactionStatus transactionStatus2 = dstm.getTransaction(transactionDefinition);
+        User u2 = new User("u8888888_2","8888888_2",22);
+
+        try {
+            userDao.addUser(u2);
+        } catch (SQLException throwables) {
+            log.error("新增用户u2异常", throwables);
+            dstm.rollback(transactionStatus2);
+            return;
+        }
+
+        log.info("提交transactionStatus1");
+        dstm.commit(transactionStatus1);
+
+    }
+
+    @Test
+    public void test9() {
+
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("jgcTest/jdbc/dataSourcetransationMag.xml");
+        DataSourceTransactionManager dstm = (DataSourceTransactionManager) context.getBean("dstm");
+        UserDao userDao = context.getBean(UserDao.class);
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus1 = dstm.getTransaction(transactionDefinition);
+
+        Object obj = TransactionSynchronizationManager.getResource(dstm.getDataSource());
+
+        User u = new User("userOutRunnable","cccccc",3);
+        try {
+            userDao.addUser(u);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            dstm.rollback(transactionStatus1);
+            return;
+        }
+
+        Runnable r = () -> {
+            TransactionStatus transactionStatus2 = dstm.getTransaction(transactionDefinition);
+            User u2 = new User("userInRunnable","cccccc",3);
+            try {
+                userDao.addUser(u2);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                dstm.rollback(transactionStatus2);
+            }
+            dstm.commit(transactionStatus2);
+        };
+
+        Thread t = new Thread(r);
+        t.start();
+        //这种会有个问题，这两个commit 哪一个都可能先执行
+        dstm.commit(transactionStatus1);
     }
 
 }
