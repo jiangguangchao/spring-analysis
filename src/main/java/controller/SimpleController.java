@@ -8,7 +8,6 @@ import org.springframework.validation.DataBinder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -32,7 +31,6 @@ public class SimpleController {
         //dataBinder.addValidators(new SimpleModelValidator());
     }
 
-    @PostConstruct
     public void initValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         this.validator = factory.getValidator();

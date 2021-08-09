@@ -15,10 +15,12 @@
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
     <bean id="simpleMethodInterceptor" class="aop.SimpleMethodInterceptor" />
+    <bean id="simpleMethodInterceptor2" class="aop.SimpleMethodInterceptor2" />
 
-    <bean class="aop.SimpleAopBean" />
+    <bean id="simpleAopBean" class="aop.SimpleAopBean" />
 
     <aop:config expose-proxy="true">
+        <aop:advisor advice-ref="simpleMethodInterceptor2" pointcut="execution(* aop.SimpleAopBean.*(..))" />
         <aop:advisor advice-ref="simpleMethodInterceptor" pointcut="execution(* aop.SimpleAopBean.*(..))" />
     </aop:config>
 
