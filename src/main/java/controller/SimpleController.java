@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author skywalker
  */
-@Controller
+//@Controller
 public class SimpleController {
 
     private Validator validator;
